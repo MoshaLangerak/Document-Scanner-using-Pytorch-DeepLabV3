@@ -109,19 +109,8 @@ if procedure_selected == "Deep Learning":
     model_selected = st.radio("Select Document Segmentation Backbone Model:", ("MobilenetV3-Large", "ResNet-50"), horizontal=True)
 
 
-tab1, tab2 = st.tabs(["Upload a Document", "Capture Document"])
 
-with tab1:
-    file_upload = st.file_uploader("Upload Document Image :", type=["jpg", "jpeg", "png"])
+file_upload = st.file_uploader("Upload Document Image :", type=["jpg", "jpeg", "png"])
 
-    if file_upload is not None:
-        _ = main(input_file=file_upload, procedure=procedure_selected, image_size=IMAGE_SIZE)
-
-
-with tab2:
-    run = st.checkbox("Start Camera")
-
-    if run:
-        file_upload = st.camera_input("Capture Document", disabled=not run)
-        if file_upload is not None:
-            _ = main(input_file=file_upload, procedure=procedure_selected, image_size=IMAGE_SIZE)
+if file_upload is not None:
+    _ = main(input_file=file_upload, procedure=procedure_selected, image_size=IMAGE_SIZE)

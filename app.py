@@ -24,19 +24,6 @@ if not os.path.exists(os.path.join(os.getcwd(), "model_r50_iou_mix_2C020.pth")):
 from torchvision.models.segmentation import deeplabv3_mobilenet_v3_large, deeplabv3_resnet50
 from utility_functions import traditional_scan, deep_learning_scan, manual_scan, get_image_download_link
 
-
-# Streamlit Components
-st.set_page_config(
-    page_title="Document Scanner | LearnOpenCV",
-    page_icon="https://learnopencv.com/wp-content/uploads/2017/12/favicon.png",
-    layout="centered",  # centered, wide
-    # initial_sidebar_state="expanded",
-    menu_items={
-        "About": "### Visit www.learnopencv.com for more exciting tutorials!!!",
-    },
-)
-
-
 @st.cache_resource
 def load_model_DL_MBV3(num_classes=2, device=torch.device("cpu"), img_size=384):
     checkpoint_path = os.path.join(os.getcwd(), "model_mbv3_iou_mix_2C049.pth")
@@ -101,13 +88,12 @@ IMAGE_SIZE = 384
 model_mbv3 = load_model_DL_MBV3(img_size=IMAGE_SIZE)
 model_r50 = load_model_DL_R50(img_size=IMAGE_SIZE)
 
-st.markdown("<h1 style='text-align: center;'>Document Scanner</h1>", unsafe_allow_html=True)
+st.title("Document Scanner")
 
 procedure_selected = st.radio("Select Scanning Procedure:", ("Traditional", "Deep Learning", "Manual"), index=1, horizontal=True)
 
 if procedure_selected == "Deep Learning":
     model_selected = st.radio("Select Document Segmentation Backbone Model:", ("MobilenetV3-Large", "ResNet-50"), horizontal=True)
-
 
 
 file_upload = st.file_uploader("Upload Document Image :", type=["jpg", "jpeg", "png"])

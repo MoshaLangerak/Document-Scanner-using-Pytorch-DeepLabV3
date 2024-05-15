@@ -1,12 +1,5 @@
-# Document-Segmentation-using-Pytorch-DeepLabV3
+# Document-Scanner-using-Pytorch-DeepLabV3
 
-This repo contains the code for the deployed app associated with the following blog posts. Refer to these blog posts to understand the code: 
+This repo contains the code forked from this repo: https://github.com/veb-101/Document-Segmentation-using-Pytorch-DeepLabV3 . All credits for initial setup, model setup and model training belong to the original author. 
 
-Blog posts: 
-
- 1. [Automatic Document Scanner using OpenCV | LearnOpenCV](https://learnopencv.com/automatic-document-scanner-using-opencv/)
- 2. [Document Scanner using Semantic Segmentation Architecture DeepLabV3 | LearnOpenCV](https://learnopencv.com/deep-learning-based-document-segmentation-using-semantic-segmentation-deeplabv3-on-custom-dataset/)
- 
-
-Streamlit app: [https://document-segmentation.streamlit.app/](https://document-segmentation.streamlit.app/)
-
+It was forked and adapted to allow for consecutive document scanning, and returning single pdf files. 

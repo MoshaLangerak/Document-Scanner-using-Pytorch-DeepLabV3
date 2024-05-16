@@ -52,12 +52,13 @@ def load_model_DL_R50(num_classes=2, device=torch.device("cpu"), img_size=384):
 
 def main(input_files, procedure, image_size=384):
     output_pdf = []
-    for input_file in input_files:
+    for i, input_file in enumerate(input_files):
         
         file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
         image = cv2.imdecode(file_bytes, 1)[:, :, ::-1]  # Decode and convert to RGB
         output_image = None
 
+        st.title(f"Document {i + 1}")
         st.write("Input image size:", image.shape)
 
         if procedure == "Manual":
@@ -67,11 +68,11 @@ def main(input_files, procedure, image_size=384):
             col1, col2 = st.columns((1, 1))
 
             with col1:
-                st.title("Input")
+                st.header("Original")
                 st.image(image, channels="RGB", use_column_width=True)
 
             with col2:
-                st.title("Scanned")
+                st.header("Scanned")
 
                 if procedure == "Traditional":
                     output_image = traditional_scan(og_image=image)

@@ -253,8 +253,7 @@ def aspect_ratio_resize(image_h, image_w, resize_to=400):
     return int(round(new_h)), int(round(new_w))
 
 
-def manual_scan(og_image: np.array, resize_shape=640):
-
+def manual_scan(og_image: np.array, key, resize_shape=640):
     image_h, image_w, _ = og_image.shape
     asp_h, asp_w = aspect_ratio_resize(image_h, image_w, resize_to=resize_shape)
 
@@ -285,11 +284,11 @@ def manual_scan(og_image: np.array, resize_shape=640):
         height=asp_h,
         width=asp_w,
         drawing_mode="polygon",
-        key="canvas",
+        key=f"canvas-{key}",
     )
     st.caption("Happy with the manual selection?")
 
-    if st.button("Get Scanned"):
+    if st.button("Get Scanned", key=f"get-scanned-{key}"):
         # Get corner points
         corners = [i[1:3] for i in canvas_result.json_data["objects"][0]["path"][:4]]
 

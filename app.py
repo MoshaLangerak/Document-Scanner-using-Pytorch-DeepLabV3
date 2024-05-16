@@ -62,8 +62,12 @@ def main(input_files, procedure, image_size=384):
         st.write("Input image size:", image.shape)
 
         if procedure == "Manual":
-            output_image = manual_scan(og_image=image)
+            output_image = manual_scan(og_image=image, key=i)
 
+            # check if the output image is not None
+            if output_image is not None:
+                output_images.append(output_image)
+   
         else:
             col1, col2 = st.columns((1, 1))
 
@@ -81,9 +85,8 @@ def main(input_files, procedure, image_size=384):
                     output_image = deep_learning_scan(og_image=image, trained_model=model, image_size=image_size)
 
                 st.image(output_image, channels="RGB", use_column_width=True)
-
-        output_images.append(output_image)
-
+            output_images.append(output_image)
+            
     # convert the list of images to pdf
     if len(output_images) > 0:
         st.markdown(images_to_pdf_download_link(output_images), unsafe_allow_html=True)

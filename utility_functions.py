@@ -14,22 +14,18 @@ import torchvision.transforms as torchvision_T
 
 # Generating a link to download a particular image file.
 # @st.cache(allow_output_mutation=True)
-def get_image_download_link(img, filename, text):
-    with st.spinner("Generating download link"):
-        img = PIL.Image.fromarray(img)
-        buffered = io.BytesIO()
-        img.save(buffered, format="JPEG")
-        img_str = base64.b64encode(buffered.getvalue()).decode()
-        href = f'<a href="data:file/txt;base64,{img_str}" download="{filename}">{text}</a>'
-        time.sleep(2)
-    return href
-
-def images_to_pdf(images: list, filename: str = "output.pdf"):
+def images_to_pdf_download_link(images: list, filename: str = "output.pdf"):
     with st.spinner("Generating PDF"):
         for i, img in enumerate(images):
             images[i] = PIL.Image.fromarray(img)
         
-        images[0].save(filename, save_all=True, append_images=images[1:])
+        buffered = io.BytesIO()
+        images[0].save(buffered, save_all=True, append_images=images[1:], format="PDF", resolution=100.0, quality=95, optimize=True, progressive=True)
+        pdf_bytes = buffered.getvalue()
+        pdf_base64 = base64.b64encode(pdf_bytes).decode()
+        pdf_href = f'<a href="data:application/pdf;base64,{pdf_base64}" download="{filename}">Download PDF</a>'
+        time.sleep(2)
+    return pdf_href
 
 def order_points(pts):
     """Rearrange coordinates to order:

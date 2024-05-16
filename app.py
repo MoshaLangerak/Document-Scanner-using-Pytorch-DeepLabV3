@@ -22,7 +22,7 @@ if not os.path.exists(os.path.join(os.getcwd(), "model_r50_iou_mix_2C020.pth")):
 
 
 from torchvision.models.segmentation import deeplabv3_mobilenet_v3_large, deeplabv3_resnet50
-from utility_functions import traditional_scan, deep_learning_scan, manual_scan, get_image_download_link, images_to_pdf
+from utility_functions import traditional_scan, deep_learning_scan, manual_scan, images_to_pdf_download_link
 
 @st.cache_resource
 def load_model_DL_MBV3(num_classes=2, device=torch.device("cpu"), img_size=384):
@@ -51,7 +51,7 @@ def load_model_DL_R50(num_classes=2, device=torch.device("cpu"), img_size=384):
 
 
 def main(input_files, procedure, image_size=384):
-    output_pdf = []
+    output_images = []
     for i, input_file in enumerate(input_files):
         
         file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
@@ -82,13 +82,11 @@ def main(input_files, procedure, image_size=384):
 
                 st.image(output_image, channels="RGB", use_column_width=True)
 
-        if output_image is not None:
-            st.markdown(get_image_download_link(output_image, f"scanned_{input_file.name}", "Download scanned File"), unsafe_allow_html=True)
-
-        output_pdf.append(output_image)
+        output_images.append(output_image)
 
     # convert the list of images to pdf
-    images_to_pdf(output_pdf)
+    if len(output_images) > 0:
+        st.markdown(images_to_pdf_download_link(output_images), unsafe_allow_html=True)
 
 
 IMAGE_SIZE = 384

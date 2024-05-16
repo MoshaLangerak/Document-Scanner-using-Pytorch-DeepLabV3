@@ -22,7 +22,7 @@ if not os.path.exists(os.path.join(os.getcwd(), "model_r50_iou_mix_2C020.pth")):
 
 
 from torchvision.models.segmentation import deeplabv3_mobilenet_v3_large, deeplabv3_resnet50
-from utility_functions import traditional_scan, deep_learning_scan, manual_scan, get_image_download_link
+from utility_functions import traditional_scan, deep_learning_scan, manual_scan, get_image_download_link, images_to_pdf
 
 @st.cache_resource
 def load_model_DL_MBV3(num_classes=2, device=torch.device("cpu"), img_size=384):
@@ -50,38 +50,44 @@ def load_model_DL_R50(num_classes=2, device=torch.device("cpu"), img_size=384):
     return model
 
 
-def main(input_file, procedure, image_size=384):
-    file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
-    image = cv2.imdecode(file_bytes, 1)[:, :, ::-1]  # Decode and convert to RGB
-    output = None
+def main(input_files, procedure, image_size=384):
+    output_pdf = []
+    for input_file in input_files:
+        
+        file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
+        image = cv2.imdecode(file_bytes, 1)[:, :, ::-1]  # Decode and convert to RGB
+        output_image = None
 
-    st.write("Input image size:", image.shape)
+        st.write("Input image size:", image.shape)
 
-    if procedure == "Manual":
-        output = manual_scan(og_image=image)
+        if procedure == "Manual":
+            output_image = manual_scan(og_image=image)
 
-    else:
-        col1, col2 = st.columns((1, 1))
+        else:
+            col1, col2 = st.columns((1, 1))
 
-        with col1:
-            st.title("Input")
-            st.image(image, channels="RGB", use_column_width=True)
+            with col1:
+                st.title("Input")
+                st.image(image, channels="RGB", use_column_width=True)
 
-        with col2:
-            st.title("Scanned")
+            with col2:
+                st.title("Scanned")
 
-            if procedure == "Traditional":
-                output = traditional_scan(og_image=image)
-            else:
-                model = model_mbv3 if model_selected == "MobilenetV3-Large" else model_r50
-                output = deep_learning_scan(og_image=image, trained_model=model, image_size=image_size)
+                if procedure == "Traditional":
+                    output_image = traditional_scan(og_image=image)
+                else:
+                    model = model_mbv3 if model_selected == "MobilenetV3-Large" else model_r50
+                    output_image = deep_learning_scan(og_image=image, trained_model=model, image_size=image_size)
 
-            st.image(output, channels="RGB", use_column_width=True)
+                st.image(output_image, channels="RGB", use_column_width=True)
 
-    if output is not None:
-        st.markdown(get_image_download_link(output, f"scanned_{input_file.name}", "Download scanned File"), unsafe_allow_html=True)
+        if output_image is not None:
+            st.markdown(get_image_download_link(output_image, f"scanned_{input_file.name}", "Download scanned File"), unsafe_allow_html=True)
 
-    return output
+        output_pdf.append(output_image)
+
+    # convert the list of images to pdf
+    images_to_pdf(output_pdf)
 
 
 IMAGE_SIZE = 384
@@ -96,7 +102,8 @@ if procedure_selected == "Deep Learning":
     model_selected = st.radio("Select Document Segmentation Backbone Model:", ("MobilenetV3-Large", "ResNet-50"), horizontal=True)
 
 
-file_upload = st.file_uploader("Upload Document Image :", type=["jpg", "jpeg", "png"])
+file_upload = st.file_uploader("Upload Document Images :", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
-if file_upload is not None:
-    _ = main(input_file=file_upload, procedure=procedure_selected, image_size=IMAGE_SIZE)
+# check if the file is uploaded
+if len(file_upload) > 0:
+    _ = main(input_files=file_upload, procedure=procedure_selected, image_size=IMAGE_SIZE)

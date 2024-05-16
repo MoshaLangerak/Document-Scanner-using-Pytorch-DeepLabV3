@@ -24,6 +24,12 @@ def get_image_download_link(img, filename, text):
         time.sleep(2)
     return href
 
+def images_to_pdf(images: list, filename: str = "output.pdf"):
+    with st.spinner("Generating PDF"):
+        for i, img in enumerate(images):
+            images[i] = PIL.Image.fromarray(img)
+        
+        images[0].save(filename, save_all=True, append_images=images[1:])
 
 def order_points(pts):
     """Rearrange coordinates to order:
@@ -44,7 +50,6 @@ def order_points(pts):
     # return the ordered coordinates
     return rect.astype("int").tolist()
 
-
 def find_dest(pts):
     (tl, tr, br, bl) = pts
     # Finding the maximum width.
@@ -60,7 +65,6 @@ def find_dest(pts):
     destination_corners = [[0, 0], [maxWidth, 0], [maxWidth, maxHeight], [0, maxHeight]]
 
     return order_points(destination_corners)
-
 
 def image_preprocess_transforms(mean=(0.4611, 0.4359, 0.3905), std=(0.2193, 0.2150, 0.2109)):
     common_transforms = torchvision_T.Compose([torchvision_T.ToTensor(), torchvision_T.Normalize(mean, std),])
